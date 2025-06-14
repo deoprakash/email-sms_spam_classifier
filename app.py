@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import joblib
 from preprocessor import TextPreprocessor 
 from flask_cors  import CORS
@@ -17,10 +17,10 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     if request.method == 'POST':
-        user_input = request.form['message']
-        result = model.predict([user_input])[0]
-        prediction = 'Spam' if result == 1 else 'Not Spam'
-        return render_template('index.html', prediction=prediction, message=user_input)
+        data = request.get_json()
+        message = data['message']
+        prediction = model.predict([message])[0]
+        return jsonify({'prediction': int(prediction)})
 
 if __name__ == '__main__':
     app.run(debug=True)
