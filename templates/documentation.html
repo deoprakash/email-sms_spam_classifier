@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spam Classifier Documentation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root {
+    --deep-navy: #0d1117;
+    --dark-slate: #161b22;
+    --slate-grey: #1f2937;
+    --light-slate: #374151;
+    --light-grey: #9ca3af;
+    --off-white: #f3f4f6;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --pure-white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+         body {
+            background-color: var(--deep-navy);
+            color: var(--off-white);
+            font-family: 'Crimson Text', serif;
+        }
+
+        /* Navbar Styling */
+.navbar {
+    width: 100%;
+    background: var(--dark-slate);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.navbar .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.navbar .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+}
+
+.navbar .nav-links a {
+    color: var(--light-grey);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    position: relative;
+    padding: 8px 0;
+}
+
+.navbar .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-cyan);
+    transition: width 0.3s ease;
+}
+
+.navbar .nav-links a:hover {
+    color: var(--accent-blue);
+}
+
+.navbar .nav-links a:hover::after {
+    width: 100%;
+}
+
+
+        .doc-container {
+            max-width: 900px;
+            margin: 140px auto 60px;
+            background-color: var(--dark-slate);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .doc-container h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            margin-bottom: 1.2rem;
+            color: var(--pure-white);
+            border-bottom: 1px solid var(--slate-grey);
+            padding-bottom: 0.5rem;
+        }
+
+        .doc-container h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-blue);
+        }
+
+        .doc-container ul,
+        .doc-container ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-container pre {
+            background: var(--slate-grey);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            color: var(--accent-cyan);
+        }
+
+        .doc-container code {
+            background-color: var(--slate-grey);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-cyan);
+        }
+
+        .doc-container a {
+            color: var(--accent-blue);
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--dark-slate);
+            color: var(--light-grey);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--slate-grey);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a class="logo" href="/">Email/SMS Spam Classifier</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="https://github.com/deoprakash" target="_blank">GitHub</a>
+            <a href="documentation">Documentation</a>
+        </div>
+    </nav>
+
+    <div class="doc-container">
+        <h2>📘 Email/SMS Spam Classifier - Project Documentation</h2>
+
+        <h3>🧠 Project Overview</h3>
+        <p>This web-based spam classifier uses a Machine Learning pipeline to classify user-submitted messages as either <strong>SPAM</strong> or <strong>HAM (not spam)</strong>. It provides a confidence score based on the model's prediction probability.</p>
+
+        <h3>📂 Dataset</h3>
+        <ul>
+            <li><strong>Dataset:</strong> SMS Spam Collection Dataset</li>
+            <li><strong>Source:</strong> UCI Machine Learning Repository</li>
+            <li><strong>Samples:</strong> ~5,500 labeled SMS messages</li>
+            <li><strong>Labels:</strong> 'ham' (legit) or 'spam'</li>
+        </ul>
+
+        <h3>⚙️ Preprocessing Steps</h3>
+        <ol>
+            <li>Convert to lowercase</li>
+            <li>Tokenization using <code>nltk.word_tokenize()</code></li>
+            <li>Remove punctuation and special characters</li>
+            <li>Remove stopwords using <code>nltk.corpus.stopwords</code></li>
+            <li>Stemming using <code>PorterStemmer</code></li>
+        </ol>
+
+        <h3>🔍 Feature Extraction</h3>
+        <p>We use the <strong>TF-IDF Vectorizer</strong> to convert text data into numerical features that capture both word frequency and uniqueness.</p>
+
+        <h3>🤖 Algorithm</h3>
+        <p>We use the <strong>Bernoulli Naive Bayes</strong> classifier due to its efficiency and effectiveness in binary text classification.</p>
+        <ul>
+            <li>Model Pipeline: <code>TF-IDF Vectorizer → BernoulliNB()</code></li>
+            <li>Training Accuracy: ~98%</li>
+        </ul>
+
+        <h3>📊 Evaluation Metrics</h3>
+        <ul>
+            <li><strong>Precision:</strong> Proportion of predicted spam that is actual spam</li>
+            <li><strong>Recall:</strong> Ability to detect all actual spam</li>
+            <li><strong>F1 Score:</strong> Harmonic mean of precision and recall</li>
+            <li><strong>Accuracy:</strong> Overall correct predictions</li>
+        </ul>
+
+        <h3>🧪 Example Results</h3>
+        <pre>
+Test message: "Congratulations! You’ve won a free cruise to the Bahamas. Call now!"
+Prediction: SPAM
+Confidence: 96%
+        </pre>
+
+        <h3>💻 Tech Stack</h3>
+        <ul>
+            <li>Python (Flask backend)</li>
+            <li>HTML, CSS (Dark UI + gradients)</li>
+            <li>NLTK, Scikit-learn</li>
+            <li>Deployed on Render</li>
+        </ul>
+
+        <h3>🚀 How to Use</h3>
+        <ol>
+            <li>Visit the home page</li>
+            <li>Enter an email or SMS message</li>
+            <li>Click "Classify Message"</li>
+            <li>View prediction and confidence score</li>
+        </ol>
+
+        <h3>📎 GitHub Repository</h3>
+        <p><a href="https://github.com/deoprakash" target="_blank">https://github.com/deoprakash</a></p>
+
+        <h3>📞 Contact</h3>
+        <p>Developed by <strong>DEO PRAKASH</strong>. For queries or feedback, reach out on <a href="mailto:your-email@example.com">email</a>.</p>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Email/SMS Spam Classifier | Developed by DEO PRAKASH</p>
+    </footer>
+</body>
+</html>

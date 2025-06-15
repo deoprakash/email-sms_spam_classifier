@@ -1,65 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spam Classifier</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Spam Classifier | Landing Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+    --deep-navy: #0d1117;
+    --dark-slate: #161b22;
+    --slate-grey: #1f2937;
+    --light-slate: #374151;
+    --light-grey: #9ca3af;
+    --off-white: #f3f4f6;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --pure-white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--deep-navy);
+    color: var(--pure-white);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Navbar Styling */
+.navbar {
+    width: 100%;
+    background: var(--dark-slate);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.navbar .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.navbar .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+}
+
+.navbar .nav-links a {
+    color: var(--light-grey);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    position: relative;
+    padding: 8px 0;
+}
+
+.navbar .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-cyan);
+    transition: width 0.3s ease;
+}
+
+.navbar .nav-links a:hover {
+    color: var(--accent-blue);
+}
+
+.navbar .nav-links a:hover::after {
+    width: 100%;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, var(--deep-navy), var(--dark-slate));
+    padding: 150px 50px 100px;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 700;
+    margin-bottom: 25px;
+    background: linear-gradient(45deg, var(--accent-blue), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1.5px;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    color: var(--light-grey);
+    max-width: 750px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 100px;
+    padding: 16px 36px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    background: var(--accent-blue);
+    color: var(--pure-white);
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);
+}
+
+.cta-button:hover {
+    background: var(--accent-cyan);
+    box-shadow: 0 15px 30px rgba(6, 182, 212, 0.3);
+}
+
+/* Features Section */
+.features {
+    padding: 100px 50px;
+    background: var(--dark-slate);
+}
+
+.features-title {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.features-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    color: var(--off-white);
+    background: linear-gradient(45deg, var(--accent-blue), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    justify-items: center;
+}
+
+.feature {
+    background: var(--slate-grey);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 35px 30px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 400px;
+}
+
+.feature:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    background: var(--accent-cyan);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--dark-slate);
+}
+
+.feature h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--accent-blue);
+    margin-bottom: 15px;
+}
+
+.feature p {
+    font-size: 1rem;
+    color: var(--light-grey);
+}
+
+/* Footer */
+footer {
+    background: var(--deep-navy);
+    text-align: center;
+    padding: 50px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+footer p {
+    color: var(--light-grey);
+    font-size: 0.95rem;
+}
+
+footer a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--accent-blue);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 15px 25px;
+    }
+
+    .hero {
+        padding: 120px 25px 80px;
+    }
+
+    .features {
+        padding: 80px 25px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cta-button {
+        padding: 14px 28px;
+        font-size: 1rem;
+    }
+
+    .hero h1 {
+        font-size: 2.4rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+    }
+}
+
+    </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <a class="logo" href="/">Spam Classifier</a>
+        <a class="logo" href="/">Email/SMS Spam Classifier</a>
         <div class="nav-links">
             <a href="/">Home</a>
             <a href="https://github.com/deoprakash" target="_blank">GitHub</a>
-            <a href="#">About</a>
+            <a href="/documentation">Documentation</a>
         </div>
     </nav>
 
-    <!-- Page Content Wrapper -->
-    <div class="page-content" style="flex: 1; display: flex; flex-direction: column; align-items: center; width: 100%;">
-        <div class="container">
-            <h1>Email/SMS Spam Classifier</h1>
-            <p class="subtitle">Advanced AI-powered message analysis and classification</p>
-
-            <form method="post" action="/predict">
-                <div class="form-group">
-                    <label class="form-label" for="message">Message Content</label>
-                    <textarea name="message" id="message" placeholder="Enter your message here..." required></textarea>
-                </div>
-                <button type="submit">Classify Message</button>
-            </form>
-
-            {% if prediction %}
-                <div class="result">
-                    <div class="result-item">
-                        <strong>Message:</strong>
-                        <div class="result-value">{{ message }}</div>
-                    </div>
-                    <div class="result-item">
-                        <strong>Prediction:</strong>
-                        <div class="prediction-value {% if prediction.lower() == 'spam' %}prediction-spam{% else %}prediction-ham{% endif %}">
-                            {{ prediction }}
-                        </div>
-                    </div>
-                    <div class="result-item">
-                        <strong>Confidence Level:</strong>
-                        <div class="confidence-container">
-                            <div class="confidence-bar">
-                                <div class="confidence-fill" style="width: {{ confidence }}%;"></div>
-                            </div>
-                            <span class="confidence-text">{{ confidence }}%</span>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Email/SMS Spam Detection</h1>
+            <p>Experience the pinnacle of AI-powered message classification. Our sophisticated neural networks deliver unparalleled accuracy in identifying spam with royal precision and confidence.</p>
+            <a href="{{ url_for('spam') }}">
+                <button class="cta-button">
+                    <span>Enter Classifier</span>
+                    <span>→</span>
+                </button>
+            </a>
         </div>
     </div>
 
+    <!-- Features -->
+    <section class="features">
+        <div class="features-container">
+            <div class="features-title">
+                <h2>Exceptional Capabilities</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">AI</div>
+                    <h3>Advanced NLP Engine</h3>
+                    <p>Sophisticated machine learning algorithms trained on premium datasets using state-of-the-art TF-IDF vectorization and Naive Bayes classification for supreme accuracy.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instantaneous Analysis</h3>
+                    <p>Lightning-fast real-time classification delivering immediate results with precision confidence scoring. Experience the speed of enterprise-grade processing.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Absolute Privacy</h3>
+                    <p>Your messages remain completely confidential. Zero data retention policy ensures your communications are analyzed securely and discarded immediately after processing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Spam Classifier Project | Developed by DEO PRAKASH</p>
+        <p>&copy; 2025 Email/SMS Spam Classifier | Developed by <a href="https://github.com/deoprakash" target="_blank">DEO PRAKASH</a></p>
     </footer>
 </body>
 </html>

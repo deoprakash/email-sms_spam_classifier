@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email/SMS Spam Classifier</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Text:wght@400;500;600&display=swap');
+
+:root {
+    --deep-navy: #0d1117;
+    --dark-slate: #161b22;
+    --slate-grey: #1f2937;
+    --light-slate: #374151;
+    --light-grey: #9ca3af;
+    --off-white: #f3f4f6;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --pure-white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Crimson Text', serif;
+    background-color: var(--deep-navy);
+    color: var(--off-white);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    background: var(--dark-slate);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.navbar .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.navbar .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+}
+
+.navbar .nav-links a {
+    color: var(--light-grey);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 8px 0;
+}
+
+.navbar .nav-links a:hover {
+    color: var(--accent-blue);
+}
+
+.navbar .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-cyan);
+    transition: width 0.3s ease;
+}
+
+.navbar .nav-links a:hover::after {
+    width: 100%;
+}
+
+/* Page Wrapper */
+.page-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 2rem 1rem;
+}
+
+/* Main Container */
+.container {
+    max-width: 700px;
+    width: 100%;
+    margin-top: 120px;
+    padding: 2rem;
+    background: var(--dark-slate);
+    border-radius: 1rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--pure-white);
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: var(--light-grey);
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--off-white);
+}
+
+textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--light-slate);
+    border-radius: 0.5rem;
+    background-color: var(--slate-grey);
+    color: var(--off-white);
+    resize: vertical;
+    transition: 0.3s ease;
+    font-family: 'Crimson Text', serif;
+}
+
+textarea:focus {
+    border-color: var(--accent-blue);
+    outline: none;
+    background-color: var(--light-slate);
+}
+
+button[type="submit"] {
+    padding: 0.75rem 2rem;
+    background: var(--accent-blue);
+    color: var(--pure-white);
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+button[type="submit"]:hover {
+    background: #2563eb;
+    transform: scale(1.05);
+}
+
+/* Results */
+.result {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.result-item {
+    margin-bottom: 1rem;
+    background-color: var(--slate-grey);
+    padding: 1rem;
+    border-left: 4px solid var(--accent-cyan);
+    border-radius: 0.4rem;
+}
+
+.result-value, .prediction-value {
+    margin-top: 0.5rem;
+    color: var(--off-white);
+    font-weight: 500;
+    word-wrap: break-word;
+}
+
+.prediction-value.prediction-spam {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+.prediction-value.prediction-ham {
+    color: #10b981;
+    font-weight: 700;
+}
+
+.confidence-container {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.confidence-bar {
+    flex-grow: 1;
+    height: 10px;
+    background-color: var(--light-slate);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--accent-cyan), var(--accent-blue));
+    transition: width 0.5s ease;
+}
+
+.confidence-text {
+    font-weight: 600;
+    color: var(--off-white);
+}
+
+/* Footer */
+footer {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--light-grey);
+    background: var(--dark-slate);
+    border-top: 1px solid var(--light-slate);
+    margin-top: auto;
+}
+
+
+    </style>
+</head>
+<body>
+   <!-- Navbar -->
+    <nav class="navbar">
+        <a class="logo" href="/">Email/SMS Spam Classifier</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="https://github.com/deoprakash" target="_blank">GitHub</a>
+            <a href="#">About</a>
+        </div>
+    </nav>
+
+    <!-- Page Content Wrapper -->
+    <div class="page-content">
+        <div class="container">
+            <h1>Email/SMS Spam Classifier</h1>
+            <p class="subtitle">AI-Powered Message Classification & Protection</p>
+
+            <form method="post" action="/predict">
+                <div class="form-group">
+                    <label class="form-label" for="message">Enter Message</label>
+                    <textarea name="message" id="message" placeholder="Enter your message..." required></textarea>
+                </div>
+                <button type="submit">Classify Message</button>
+            </form>
+
+            <div class="result">
+    <div class="result-item">
+        <strong>Message:</strong>
+        <div class="result-value">{{ message }}</div>
+    </div>
+    <div class="result-item">
+        <strong>Prediction:</strong>
+        <div class="prediction-value {% if prediction == 'SPAM' %}prediction-spam{% else %}prediction-ham{% endif %}">
+            {{ prediction }}
+        </div>
+    </div>
+    <div class="result-item">
+        <strong>Confidence Level:</strong>
+        <div class="confidence-container">
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ confidence }}%;"></div>
+            </div>
+            <span class="confidence-text">{{ confidence }}%</span>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Email/SMS Spam Classifier | Developed by DEO PRAKASH</p>
+    </footer>
+</body>
+</html>
