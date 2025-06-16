@@ -8,7 +8,8 @@ CORS(app)
 
 # Load trained pipeline
 
-model = joblib.load('Model/email_classifier.pkl')
+model = joblib.load('Model/email_spam_classifier.pkl')
+vectorizer = joblib.load('Model/vectorizer.pkl')
 
 @app.route('/')
 def home():
@@ -30,9 +31,9 @@ def predict():
             return render_template('spam.html', prediction="No input provided", message="", confidence=0)
         
         processed = transform_text(user_input)
-
-        prediction_class = model.predict([processed])[0]
-        prediction_proba = model.predict_proba([processed])[0]
+        vectorized_text = vectorizer.transform([processed])
+        prediction_class = model.predict(vectorized_text)[0]
+        prediction_proba = model.predict_proba(vectorized_text)[0]
         confidence = round(max(prediction_proba) * 100, 2)
         prediction = 'Spam' if prediction_class == 1 else 'Not Spam'
 
