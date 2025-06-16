@@ -1,9 +1,7 @@
-# text_preprocessor.py
-
+# preprocessor.py
 import nltk
-from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
-from sklearn.base import BaseEstimator, TransformerMixin
+from nltk.stem.porter import PorterStemmer
 import string
 
 nltk.download('punkt')
@@ -11,17 +9,10 @@ nltk.download('stopwords')
 
 ps = PorterStemmer()
 
-class TextPreprocessor(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        return [self.transform_text(text) for text in X]
-
-    def transform_text(self, text):
-        text = str(text).lower()
-        text = nltk.word_tokenize(text)
-        y = [i for i in text if i.isalnum()]
-        y = [i for i in y if i not in stopwords.words('english') and i not in string.punctuation]
-        y = [ps.stem(i) for i in y]
-        return " ".join(y)
+def transform_text(text):
+    text = str(text).lower()
+    text = nltk.word_tokenize(text)
+    text = [t for t in text if t.isalnum()]
+    text = [t for t in text if t not in stopwords.words('english') and t not in string.punctuation]
+    text = [ps.stem(t) for t in text]
+    return " ".join(text)
