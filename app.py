@@ -1,7 +1,15 @@
 from flask import Flask, render_template, request
 import joblib
-from preprocessor import TextPreprocessor 
 from flask_cors  import CORS
+
+import nltk
+from nltk.stem.porter import PorterStemmer
+from nltk.corpus import stopwords
+from sklearn.base import BaseEstimator, TransformerMixin
+import string
+
+nltk.download('punkt')
+nltk.download('stopwords')
 
 app = Flask(__name__)
 CORS(app)
@@ -9,6 +17,24 @@ CORS(app)
 # Load trained pipeline
 
 model = joblib.load('Model/email_classifier.pkl')
+
+ps = PorterStemmer()
+
+class TextPreprocessor(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        return [self.transform_text(text) for text in X]
+
+    def transform_text(self, text):
+        text = str(text).lower()
+        text = nltk.word_tokenize(text)
+        y = [i for i in text if i.isalnum()]
+        y = [i for i in y if i not in stopwords.words('english') and i not in string.punctuation]
+        y = [ps.stem(i) for i in y]
+        return " ".join(y)
+
 
 @app.route('/')
 def home():
