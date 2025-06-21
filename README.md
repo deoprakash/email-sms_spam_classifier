@@ -50,7 +50,7 @@ This classifier uses the **Multinomial/Bernoulli Naive Bayes** algorithm with **
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/your-username/email-sms-spam-classifier.git
+git clone https://github.com/deoprakash/email-sms-spam-classifier.git
 
 # 2. Navigate into the directory
 cd email-sms-spam-classifier
