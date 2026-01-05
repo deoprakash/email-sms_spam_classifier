@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 import joblib
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
@@ -7,18 +7,12 @@ from preprocessor import transform_text
 from tools import db_helper, model_trainer
 import os
 
-# Determine static folder location
-STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'frontend/dist'))
-
-app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='')
+app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Change this to a random secret key
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
-print(f"[INFO] Static folder path: {STATIC_DIR}")
-print(f"[INFO] Static folder exists: {os.path.exists(STATIC_DIR)}")
-if os.path.exists(STATIC_DIR):
-    print(f"[INFO] Contents: {os.listdir(STATIC_DIR)}")
+print(f"[INFO] Backend API started")
 
 # Load trained pipeline
 model = joblib.load('Model/pipeline.pkl')
@@ -203,49 +197,11 @@ def handle_connect():
     except Exception as e:
         print('Error sending initial data:', str(e))
 
-
 @socketio.on('disconnect')
 def handle_disconnect():
     """Handle client disconnection"""
     print('Client disconnected')
 
-# Serve React frontend
-@app.route('/index.html')
-def serve_index():
-    """Serve index.html"""
-    return send_from_directory(STATIC_DIR, 'index.html')
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve_react(path):
-    """Serve React app - catch-all for client-side routing"""
-    # If path is a file (has extension), try to serve it from static
-    if path and '.' in path:
-        try:
-            return send_from_directory(STATIC_DIR, path)
-        except Exception as e:
-            print(f"[DEBUG] Failed to serve static file {path}: {e}")
-            pass
-    
-    # Otherwise, serve index.html for React Router
-    index_path = os.path.join(STATIC_DIR, 'index.html')
-    if os.path.exists(index_path):
-        return send_from_directory(STATIC_DIR, 'index.html')
-    else:
-        # In development/fallback, return API status if dist doesn't exist
-        print(f"[WARNING] index.html not found at {index_path}")
-        return jsonify({
-            'status': 'ok',
-            'message': 'Email/SMS Spam Classifier API (React frontend not available)',
-            'note': 'React frontend will be available after build completes',
-            'endpoints': {
-                'predict': '/api/predict (POST)',
-                'metrics': '/api/metrics (GET)',
-                'model_info': '/api/model/info (GET)',
-                'model_history': '/api/model/history (GET)',
-                'model_retrain': '/api/model/retrain (POST)'
-            }
-        })
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='127.0.0.1', port=5000)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
