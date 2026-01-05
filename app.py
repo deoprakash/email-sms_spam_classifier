@@ -7,14 +7,18 @@ from preprocessor import transform_text
 from tools import db_helper, model_trainer
 import os
 
-# Determine if running in production (Render) or development
-STATIC_DIR = os.path.join(os.path.dirname(__file__), 'frontend/dist')
-RUNNING_IN_PRODUCTION = os.path.exists(STATIC_DIR)
+# Determine static folder location
+STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'frontend/dist'))
 
 app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='')
 app.secret_key = 'your_secret_key'  # Change this to a random secret key
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+
+print(f"[INFO] Static folder path: {STATIC_DIR}")
+print(f"[INFO] Static folder exists: {os.path.exists(STATIC_DIR)}")
+if os.path.exists(STATIC_DIR):
+    print(f"[INFO] Contents: {os.listdir(STATIC_DIR)}")
 
 # Load trained pipeline
 model = joblib.load('Model/pipeline.pkl')
@@ -215,21 +219,25 @@ def serve_index():
 @app.route('/<path:path>')
 def serve_react(path):
     """Serve React app - catch-all for client-side routing"""
-    # If path is a file (has extension), try to serve it
+    # If path is a file (has extension), try to serve it from static
     if path and '.' in path:
         try:
             return send_from_directory(STATIC_DIR, path)
-        except:
+        except Exception as e:
+            print(f"[DEBUG] Failed to serve static file {path}: {e}")
             pass
     
     # Otherwise, serve index.html for React Router
-    if RUNNING_IN_PRODUCTION:
+    index_path = os.path.join(STATIC_DIR, 'index.html')
+    if os.path.exists(index_path):
         return send_from_directory(STATIC_DIR, 'index.html')
     else:
-        # In development, return API status if dist doesn't exist
+        # In development/fallback, return API status if dist doesn't exist
+        print(f"[WARNING] index.html not found at {index_path}")
         return jsonify({
             'status': 'ok',
-            'message': 'Email/SMS Spam Classifier API',
+            'message': 'Email/SMS Spam Classifier API (React frontend not available)',
+            'note': 'React frontend will be available after build completes',
             'endpoints': {
                 'predict': '/api/predict (POST)',
                 'metrics': '/api/metrics (GET)',
