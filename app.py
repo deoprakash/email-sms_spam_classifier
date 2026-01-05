@@ -1,14 +1,19 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import joblib
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 from apscheduler.schedulers.background import BackgroundScheduler
 from preprocessor import transform_text
 from tools import db_helper, model_trainer
+import os
 
-app = Flask(__name__)
+# Determine if running in production (Render) or development
+STATIC_DIR = os.path.join(os.path.dirname(__file__), 'frontend/dist')
+RUNNING_IN_PRODUCTION = os.path.exists(STATIC_DIR)
+
+app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='')
 app.secret_key = 'your_secret_key'  # Change this to a random secret key
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # Load trained pipeline
@@ -200,6 +205,39 @@ def handle_disconnect():
     """Handle client disconnection"""
     print('Client disconnected')
 
+# Serve React frontend
+@app.route('/index.html')
+def serve_index():
+    """Serve index.html"""
+    return send_from_directory(STATIC_DIR, 'index.html')
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react(path):
+    """Serve React app - catch-all for client-side routing"""
+    # If path is a file (has extension), try to serve it
+    if path and '.' in path:
+        try:
+            return send_from_directory(STATIC_DIR, path)
+        except:
+            pass
+    
+    # Otherwise, serve index.html for React Router
+    if RUNNING_IN_PRODUCTION:
+        return send_from_directory(STATIC_DIR, 'index.html')
+    else:
+        # In development, return API status if dist doesn't exist
+        return jsonify({
+            'status': 'ok',
+            'message': 'Email/SMS Spam Classifier API',
+            'endpoints': {
+                'predict': '/api/predict (POST)',
+                'metrics': '/api/metrics (GET)',
+                'model_info': '/api/model/info (GET)',
+                'model_history': '/api/model/history (GET)',
+                'model_retrain': '/api/model/retrain (POST)'
+            }
+        })
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='127.0.0.1', port=5000)
