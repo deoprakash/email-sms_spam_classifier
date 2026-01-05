@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import ActivityLog from '../components/ActivityLog';
 import ModelStatus from '../components/ModelStatus';
 
 const features = [
@@ -23,7 +22,7 @@ const features = [
 const Home = () => {
   return (
     <div className="space-y-12">
-      <section className="max-w-6xl mx-auto grid lg:grid-cols-[1.2fr_0.8fr] gap-8 items-stretch">
+      <section className="max-w-6xl mx-auto space-y-6">
         <div className="space-y-6 section-card p-6 md:p-7">
           <div className="flex items-center gap-3">
             <span className="pill">Live overview</span>
@@ -56,34 +55,6 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="section-card p-5 md:p-6 flex flex-col gap-5">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-display">Activity</h3>
-            <span className="pill">24h</span>
-          </div>
-          <div className="bg-gradient-to-b from-ink to-slate rounded-2xl p-4 border border-white/5 shadow-glow">
-            <div className="flex justify-between text-xs text-cloud/70 mb-3">
-              <span>7a</span><span>11a</span><span>3p</span><span>7p</span><span>11p</span>
-            </div>
-            <div className="relative h-36 flex items-end gap-2">
-              {[25, 40, 32, 70, 18, 55, 62, 45, 52, 68, 38, 48].map((h, idx) => (
-                <div key={idx} className="flex-1 flex flex-col justify-end">
-                  <div className="mx-auto w-full rounded-full bg-gradient-to-t from-blue via-cyan to-gold" style={{ height: `${h}%`, minHeight: '10%' }} />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="section-card p-3 flex items-center justify-between">
-              <span className="text-cloud/80">Messages</span>
-              <span className="font-semibold text-white">1,248</span>
-            </div>
-            <div className="section-card p-3 flex items-center justify-between">
-              <span className="text-cloud/80">Avg. confidence</span>
-              <span className="font-semibold text-gold">92%</span>
-            </div>
-          </div>
-        </div>
       </section>
 
       <section className="max-w-6xl mx-auto space-y-4">
@@ -92,14 +63,6 @@ const Home = () => {
           <span className="pill">Auto-Retraining</span>
         </div>
         <ModelStatus />
-      </section>
-
-      <section className="max-w-6xl mx-auto space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-display">Live Activity Stream</h2>
-          <span className="pill">Real-time</span>
-        </div>
-        <ActivityLog />
       </section>
 
       <section className="max-w-6xl mx-auto space-y-4">

@@ -49,7 +49,7 @@ const ModelStatus = () => {
 
     // Connect to WebSocket for real-time updates
     const socket = io(API_BASE, {
-      transports: ['websocket', 'polling'],
+      transports: ['polling'], // backend running without websocket upgrade
       reconnection: true,
     });
 

@@ -1,7 +1,7 @@
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import NavBar from './components/NavBar.jsx';
 import Footer from './components/Footer.jsx';
-import MetricsStrip from './components/MetricsStrip.jsx';
 import Home from './pages/Home.jsx';
 import SpamClassifier from './pages/SpamClassifier.jsx';
 import Login from './pages/Login.jsx';
@@ -19,7 +19,6 @@ function App() {
           <Route path="/documentation" element={<Documentation />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        <MetricsStrip />
       </main>
       <Footer />
     </div>

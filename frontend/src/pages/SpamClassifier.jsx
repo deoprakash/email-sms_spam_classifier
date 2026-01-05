@@ -1,20 +1,24 @@
 import { useState } from 'react';
 
-const API_BASE = import.meta.env.VITE_API_BASE || '';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000';
 
 const SpamClassifier = () => {
   const [message, setMessage] = useState('');
   const [prediction, setPrediction] = useState('');
   const [confidence, setConfidence] = useState(0);
   const [status, setStatus] = useState('');
+  const [feedbackStatus, setFeedbackStatus] = useState('');
+  const [predictionId, setPredictionId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const submit = async (evt) => {
     evt.preventDefault();
     setStatus('');
+    setFeedbackStatus('');
     setIsLoading(true);
     setPrediction('');
     setConfidence(0);
+    setPredictionId(null);
 
     try {
       const response = await fetch(`${API_BASE}/api/predict`, {
@@ -32,12 +36,17 @@ const SpamClassifier = () => {
 
       setPrediction(payload.prediction || '');
       setConfidence(Number(payload.confidence || 0));
+      setPredictionId(payload.id || null);
       setStatus('Prediction updated');
     } catch (err) {
       setStatus(err.message || 'Unexpected error');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const sendFeedback = () => {
+    setFeedbackStatus('Feedback is disabled');
   };
 
   const loweredPrediction = (prediction || '').trim().toLowerCase();

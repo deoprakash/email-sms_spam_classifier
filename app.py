@@ -78,12 +78,13 @@ def predict():
         prediction_proba = model.predict_proba([processed])[0]
         confidence = round(float(max(prediction_proba) * 100), 2)
         prediction = 'SPAM' if prediction_class == 1 else 'HAM'
-        db_helper.save_to_db(user_input, prediction)
+        prediction_id = db_helper.save_to_db(user_input, prediction)
 
         result = {
             "prediction": prediction,
             "confidence": confidence,
-            "message": user_input
+            "message": user_input,
+            "id": prediction_id,
         }
 
         # Emit real-time event to all connected clients
@@ -179,6 +180,12 @@ def api_manual_retrain():
     except Exception as e:
         print("Error during manual retrain:", str(e))
         return jsonify({'status': 'error', 'error': str(e)}), 500
+
+
+@app.route('/api/feedback', methods=['POST'])
+def api_feedback():
+    """Human feedback is currently disabled."""
+    return jsonify({'error': 'Feedback disabled'}), 403
 
 
 @socketio.on('connect')

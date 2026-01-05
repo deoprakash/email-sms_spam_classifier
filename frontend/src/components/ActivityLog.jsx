@@ -10,7 +10,7 @@ const ActivityLog = () => {
   useEffect(() => {
     // Connect to WebSocket
     const newSocket = io(API_BASE, {
-      transports: ['websocket', 'polling'],
+      transports: ['polling'], // use polling since backend is running without a websocket server
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionAttempts: 5,
@@ -20,6 +20,7 @@ const ActivityLog = () => {
 
     // Listen for new predictions
     newSocket.on('new_prediction', (data) => {
+      console.log('new_prediction received', data);
       const activity = {
         id: Date.now(),
         message: data.message,

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000';
@@ -40,7 +40,7 @@ const MetricsStrip = () => {
 
     // Connect to WebSocket for real-time updates
     const newSocket = io(API_BASE, {
-      transports: ['websocket', 'polling'],
+      transports: ['polling'], // backend running without websocket upgrade
       reconnection: true,
     });
 
