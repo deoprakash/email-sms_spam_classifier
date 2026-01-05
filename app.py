@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
+from flask import Flask, request, jsonify
 import joblib
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
@@ -47,47 +47,29 @@ if not scheduler.running:
 
 @app.route('/')
 def home():
-    return render_template('index.html')
-
-@app.route('/spam')
-def spam():
-    return render_template('spam.html')
-
-@app.route('/documentation')
-def documentation():
-    return render_template('documentation.html')
-
-@app.route('/predict', methods=['GET', 'POST'])
-def predict():
-    try:
-        prediction = None
-        if request.method == 'POST':
-            user_input = request.form.get('message', '')
-            if not user_input.strip():
-                return render_template('spam.html', prediction="No input provided", message="", confidence=0)
-            
-            processed = transform_text(user_input)
-            prediction_class = model.predict([processed])[0]
-            prediction_proba = model.predict_proba([processed])[0]
-            confidence = round(max(prediction_proba) * 100, 2)
-            prediction = 'SPAM' if prediction_class == 1 else 'HAM'
-            db_helper.save_to_db(user_input, prediction)
-
-            return render_template('spam.html', prediction=prediction, message=user_input, confidence=confidence)
-
-    except Exception as e:
-        print("Error:", str(e))
-        return render_template('spam.html', prediction="Error during prediction", message="", confidence=0)
-
+    """API health check endpoint"""
+    return jsonify({
+        'status': 'ok',
+        'message': 'Email/SMS Spam Classifier API',
+        'endpoints': {
+            'predict': '/api/predict (POST)',
+            'metrics': '/api/metrics (GET)',
+            'model_info': '/api/model/info (GET)',
+            'model_history': '/api/model/history (GET)',
+            'model_retrain': '/api/model/retrain (POST)'
+        }
+    }), 200
 
 @app.route('/api/predict', methods=['POST'])
-def api_predict():
+def predict():
+    """Predict spam/ham for a given message"""
     try:
         data = request.get_json(silent=True) or {}
         user_input = (data.get('message') or '').strip()
+        
         if not user_input:
-            return jsonify({"error": "No input provided"}), 400
-
+            return jsonify({'error': 'No message provided'}), 400
+        
         processed = transform_text(user_input)
         prediction_class = int(model.predict([processed])[0])
         prediction_proba = model.predict_proba([processed])[0]
