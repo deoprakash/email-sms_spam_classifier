@@ -3,6 +3,14 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  preview: {
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'email-sms-spam-classifier-1-kmko.onrender.com',
+      '*.onrender.com',
+    ],
+  },
   server: {
     port: 5173,
     proxy: {
