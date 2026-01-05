@@ -1,2 +1,9 @@
 __pycache__/
 myenv/
+*.db
+*.pyc
+.DS_Store
+.env
+node_modules/
+dist/
+build/
