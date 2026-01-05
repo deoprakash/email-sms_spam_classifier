@@ -1,5 +1,8 @@
 Flask
 Flask-Cors
+flask-socketio
+python-socketio
+APScheduler
 nltk
 pandas
 numpy
@@ -7,3 +10,5 @@ scikit-learn
 matplotlib
 joblib
 gunicorn
+pytest
+pytest-cov
